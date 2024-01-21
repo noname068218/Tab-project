@@ -125,7 +125,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  const modalTimerID = setTimeout(openModal, 9000);
+  // const modalTimerID = setTimeout(openModal, 9000);
 
   function showModalByScroll() {
     if (
@@ -138,4 +138,68 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   window.addEventListener("scroll", showModalByScroll);
+
+  // Class for card
+
+  class MenuCard {
+    constructor(src, alt, titel, descr, price, parentSelector) {
+      this.src = src;
+      this.alt = alt;
+      this.titel = titel;
+      this.descr = descr;
+      this.price = price;
+      this.parent = document.querySelector(parentSelector);
+      this.transfer = 5;
+      this.changeToEuro();
+    }
+
+    changeToEuro() {
+      this.price = this.price * this.transfer;
+    }
+    render() {
+      const element = document.createElement("div");
+      element.innerHTML = `
+                <div class="menu__item">
+                    <img src=${this.src} alt=${this.alt} />
+                    <h3 class="menu__item-subtitle">${this.titel}</h3>
+                    <div class="menu__item-descr">
+                      ${this.descr}
+                    </div>
+                    <div class="menu__item-divider"></div>
+                    <div class="menu__item-price">
+                      <div class="menu__item-cost">Price:</div>
+                      <div class="menu__item-total"><span>${this.price}</span> $/day</div>
+                    </div>
+                  </div>
+      `;
+      this.parent.append(element);
+    }
+  }
+
+  new MenuCard(
+    "img/tabs/vegy.jpg",
+    "vegy",
+    "Fitness Menu",
+    "The Fitness menu is a new approach to preparing dishes: more fresh vegetables and fruits. Product for active and healthy people. This is an entirely new product with an optimal price and high quality!",
+    10,
+    ".menu .container"
+  ).render();
+
+  new MenuCard(
+    "img/tabs/elite.jpg",
+    "elite",
+    "Menu Premium",
+    "In the Premium menu, we use not only beautiful packaging design but also high-quality dish execution. Salmon, seafood, fruits - arestaurant menu without going to a restaurant!",
+    9,
+    ".menu .container"
+  ).render();
+
+  new MenuCard(
+    "img/tabs/post.jpg",
+    "post",
+    "Post Menu",
+    " The Post Menu is a careful selection of ingredients: complete absence of animal products, almond, oat, coconut, or buckwheat milk, the right amount of proteins due to tofu and imported  vegetarian steaks.",
+    7,
+    ".menu .container"
+  ).render();
 });
