@@ -142,12 +142,13 @@ window.addEventListener("DOMContentLoaded", () => {
   // Class for card
 
   class MenuCard {
-    constructor(src, alt, titel, descr, price, parentSelector) {
+    constructor(src, alt, titel, descr, price, parentSelector, ...classes) {
       this.src = src;
       this.alt = alt;
       this.titel = titel;
       this.descr = descr;
       this.price = price;
+      this.classes = classes;
       this.parent = document.querySelector(parentSelector);
       this.transfer = 5;
       this.changeToEuro();
@@ -158,8 +159,14 @@ window.addEventListener("DOMContentLoaded", () => {
     }
     render() {
       const element = document.createElement("div");
+      if (this.classes.length === 0) {
+        this.element = "menu__item";
+        element.classList.add(this.element);
+      } else {
+        this.classes.forEach((className) => element.classList.add(className));
+      }
+
       element.innerHTML = `
-                <div class="menu__item">
                     <img src=${this.src} alt=${this.alt} />
                     <h3 class="menu__item-subtitle">${this.titel}</h3>
                     <div class="menu__item-descr">
@@ -170,7 +177,6 @@ window.addEventListener("DOMContentLoaded", () => {
                       <div class="menu__item-cost">Price:</div>
                       <div class="menu__item-total"><span>${this.price}</span> $/day</div>
                     </div>
-                  </div>
       `;
       this.parent.append(element);
     }
@@ -182,7 +188,9 @@ window.addEventListener("DOMContentLoaded", () => {
     "Fitness Menu",
     "The Fitness menu is a new approach to preparing dishes: more fresh vegetables and fruits. Product for active and healthy people. This is an entirely new product with an optimal price and high quality!",
     10,
-    ".menu .container"
+    ".menu .container",
+    "menu__item",
+    "big"
   ).render();
 
   new MenuCard(
@@ -191,7 +199,8 @@ window.addEventListener("DOMContentLoaded", () => {
     "Menu Premium",
     "In the Premium menu, we use not only beautiful packaging design but also high-quality dish execution. Salmon, seafood, fruits - arestaurant menu without going to a restaurant!",
     9,
-    ".menu .container"
+    ".menu .container",
+    "menu__item"
   ).render();
 
   new MenuCard(
@@ -200,6 +209,50 @@ window.addEventListener("DOMContentLoaded", () => {
     "Post Menu",
     " The Post Menu is a careful selection of ingredients: complete absence of animal products, almond, oat, coconut, or buckwheat milk, the right amount of proteins due to tofu and imported  vegetarian steaks.",
     7,
-    ".menu .container"
+    ".menu .container",
+    "menu__item"
   ).render();
+
+  //Forms
+
+  const forms = document.querySelectorAll("form");
+
+  const message = {
+    loading: "loading",
+    success: "Thak you, we call you",
+    failure: "Error",
+  };
+
+  forms.forEach((item) => {
+    postData(item);
+  });
+
+  function postData(form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const statusMessage = document.createElement("div");
+      statusMessage.classList.add("status");
+      statusMessage.textContent = message.loading;
+
+      form.append(statusMessage);
+
+      const request = new XMLHttpRequest();
+
+      request.open("POST", "serves.php");
+      request.setRequestHeader("Content-type", "multipart/form-data");
+      const formData = new FormData(form);
+
+      request.send(formData);
+
+      request.addEventListener("load", () => {
+        if (request.status === 200) {
+          statusMessage.textContent = message.success;
+          form.reset();
+        } else {
+          statusMessage.textContent = message.failure;
+        }
+      });
+    });
+  }
 });
